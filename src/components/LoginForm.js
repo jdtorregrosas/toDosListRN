@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Image } from 'react-native';
 import {
   Container,
   Content,
@@ -7,87 +8,106 @@ import {
   InputGroup,
   Input,
   Icon,
-  Text,
-  Picker,
-  Button
+  Button,
+  Text
 } from 'native-base';
-
-const Item = Picker.Item;
+import { connect } from 'react-redux';
+import { emailChanged, passwordChanged, login } from '../actions';
 
 class LoginForm extends Component {
-  constructor(props) {
-        super(props);
-        this.state = {
-            selectedItem: undefined,
-            selected1: 'key0',
-            results: {
-                items: [],
-            },
-        };
+  onChangeEmail(email) {
+    this.props.emailChanged(email);
   }
-  onValueChange(value: string) {
-      this.setState({
-          selected1: value,
-      });
+  onChangePassword(password) {
+    this.props.passwordChanged(password);
+  }
+  onLogin() {
+    this.props.login(this.props.email, this.props.password);
+  }
+  renderError() {
+    if (this.props.error) {
+      return (
+        <Text style={styles.failedStyle}> Authentication failed!!</Text>
+      );
+    }
+    return;
   }
   render() {
     return (
       <Container>
-        <Content>
+        <Content style={styles.contentStyle}>
             <List>
-                <ListItem>
-                    <InputGroup>
-                        <Input inlineLabel label="First Name" placeholder="John" />
-                    </InputGroup>
-                </ListItem>
-
-                <ListItem>
-                    <InputGroup>
-                        <Icon name="ios-person" style={{ color: '#0A69FE' }} />
-                        <Input placeholder="EMAIL" />
-                    </InputGroup>
-                </ListItem>
-                <ListItem>
-                    <InputGroup>
-                        <Icon name="ios-unlock" style={{ color: '#0A69FE' }} />
-                        <Input placeholder="PASSWORD" secureTextEntry />
-                    </InputGroup>
-                </ListItem>
-                <ListItem>
-                    <InputGroup>
-                        <Icon name="ios-call" style={{ color: '#0A69FE' }} />
-                        <Input placeholder="PHONE" keyboardType="numeric" />
-                    </InputGroup>
-                </ListItem>
-
-                <ListItem iconLeft>
-                    <Icon name="ios-transgender" style={{ color: '#0A69FE' }} />
-                    <Text>GENDER</Text>
-                    <Picker
-                      iosHeader="Select one"
-                      mode="dropdown"
-                      selectedValue={this.state.selected1}
-                      onValueChange={this.onValueChange.bind(this)}
-                    >
-                        <Item label="Male" value="key0" />
-                        <Item label="Female" value="key1" />
-                        <Item label="Other" value="key2" />
-                    </Picker>
-                </ListItem>
-
-                <ListItem>
-                    <InputGroup >
-                        <Input stackedLabel label="Permanent Address" placeholder="Address" />
-                    </InputGroup>
-                </ListItem>
+              <ListItem>
+                <Image
+                  style={styles.imageStyle}
+                  source={require('../img/todo.png')}
+                />
+              </ListItem>
+              <ListItem>
+                  <InputGroup>
+                      <Icon name="ios-person" style={{ color: '#66C067' }} />
+                      <Input
+                        onChangeText={this.onChangeEmail.bind(this)}
+                        placeholder="EMAIL"
+                        value={this.props.email}
+                      />
+                  </InputGroup>
+              </ListItem>
+              <ListItem>
+                  <InputGroup>
+                      <Icon name="ios-unlock" style={{ color: '#66C067' }} />
+                      <Input
+                        onChangeText={this.onChangePassword.bind(this)}
+                        placeholder="PASSWORD"
+                        secureTextEntry
+                      />
+                  </InputGroup>
+              </ListItem>
             </List>
-            <Button style={{ alignSelf: 'center', marginTop: 20, marginBottom: 20 }}>
-                Sign Up
+            {this.renderError()}
+            <Button
+              onPress={this.onLogin.bind(this)}
+              style={styles.buttonStyle}
+              block
+              success
+            >
+              Login
             </Button>
+            <Text>{ this.props.email }</Text>
+            <Text>{ this.props.password }</Text>
         </Content>
     </Container>
     );
   }
 }
 
-export default LoginForm;
+const styles = {
+  buttonStyle: {
+    marginTop: 20,
+    marginBottom: 20
+  },
+  contentStyle: {
+    margin: 20
+  },
+  imageStyle: {
+    height: 200,
+    width: 200,
+    alignSelf: 'center'
+  },
+  failedStyle: {
+    fontSize: 20,
+    color: '#F00',
+    alignSelf: 'center'
+  }
+};
+
+const mapStateToProps = (state) => {
+  const { email, password, error } = state.auth;
+  return {
+    email,
+    password,
+    error
+  };
+};
+
+export default connect(mapStateToProps, { emailChanged, passwordChanged, login })(LoginForm);
