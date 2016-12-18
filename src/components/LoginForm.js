@@ -60,6 +60,7 @@ class LoginForm extends Component {
                         onChangeText={this.onChangePassword.bind(this)}
                         placeholder="PASSWORD"
                         secureTextEntry
+                        value={this.props.password}
                       />
                   </InputGroup>
               </ListItem>
@@ -87,11 +88,11 @@ const styles = {
     marginBottom: 20
   },
   contentStyle: {
-    margin: 20
+    margin: 40
   },
   imageStyle: {
-    height: 200,
-    width: 200,
+    height: 100,
+    width: 100,
     alignSelf: 'center'
   },
   failedStyle: {
