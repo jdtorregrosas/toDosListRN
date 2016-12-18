@@ -12,6 +12,7 @@ import {
   Text
 } from 'native-base';
 import { connect } from 'react-redux';
+import Spinner from './Spinner';
 import { emailChanged, passwordChanged, login } from '../actions';
 
 class LoginForm extends Component {
@@ -31,6 +32,21 @@ class LoginForm extends Component {
       );
     }
     return;
+  }
+  renderButton() {
+    if (this.props.loading) {
+      return <Spinner />;
+    }
+    return (
+      <Button
+        onPress={this.onLogin.bind(this)}
+        style={styles.buttonStyle}
+        block
+        success
+      >
+        Login
+      </Button>
+    );
   }
   render() {
     return (
@@ -66,16 +82,7 @@ class LoginForm extends Component {
               </ListItem>
             </List>
             {this.renderError()}
-            <Button
-              onPress={this.onLogin.bind(this)}
-              style={styles.buttonStyle}
-              block
-              success
-            >
-              Login
-            </Button>
-            <Text>{ this.props.email }</Text>
-            <Text>{ this.props.password }</Text>
+            {this.renderButton()}
         </Content>
     </Container>
     );
@@ -103,11 +110,12 @@ const styles = {
 };
 
 const mapStateToProps = (state) => {
-  const { email, password, error } = state.auth;
+  const { email, password, error, loading } = state.auth;
   return {
     email,
     password,
-    error
+    error,
+    loading
   };
 };
 
